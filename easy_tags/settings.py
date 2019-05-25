@@ -1,0 +1,1 @@
+EASY_TAGS_CONFIG = {}

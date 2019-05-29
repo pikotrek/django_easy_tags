@@ -21,7 +21,10 @@ class GetObjectsByAllTagsFilter(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         tags = ','.join(request.GET.getlist('tag'))
-        return TaggedItem.objects.get_intersection_by_model(queryset, tags)
+        if tags:
+            return TaggedItem.objects.get_intersection_by_model(queryset, tags)
+        else:
+            return queryset
 
 
 class GetObjectsByAnyTagFilter(BaseFilterBackend):
@@ -31,4 +34,7 @@ class GetObjectsByAnyTagFilter(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         tags = ','.join(request.GET.getlist('tag'))
-        return TaggedItem.objects.get_union_by_model(queryset, tags)
+        if tags:
+            return TaggedItem.objects.get_union_by_model(queryset, tags)
+        else:
+            return queryset

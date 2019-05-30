@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.conf import settings
+from django.db import ProgrammingError
 from django.utils.module_loading import import_string
 
 from easy_tags import settings as easy_tags_settings
@@ -39,18 +40,20 @@ class EasyTagConfig(AppConfig):
                 }
 
         content_types = {}
+        try:
+            for model, content_type in ContentType.objects.get_for_models(*app_settings.keys()).items():
+                label = app_settings[model]['label']
+                if not label:
+                    label = content_type.model
+                permissions = get_permissions(app_settings[model]['permissions'])
+                content_types[label] = {
+                    'content_type': content_type,
+                    'permissions': permissions
+                }
+                register(model)
 
-        for model, content_type in ContentType.objects.get_for_models(*app_settings.keys()).items():
-            label = app_settings[model]['label']
-            if not label:
-                label = content_type.model
-            permissions = get_permissions(app_settings[model]['permissions'])
-            content_types[label] = {
-                'content_type': content_type,
-                'permissions': permissions
-            }
-            register(model)
+            easy_tags_settings.EASY_TAGS_CONFIG = content_types
 
-        easy_tags_settings.EASY_TAGS_CONFIG = content_types
-
-        EasyTagConfig.configured = True
+            EasyTagConfig.configured = True
+        except ProgrammingError:
+            pass

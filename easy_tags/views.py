@@ -50,9 +50,9 @@ class TaggingView(
         return context
 
     def create(self, request, *args, **kwargs):
-        del self._lazy_object.tags
         serializer = self.get_serializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
+        del self._lazy_object.tags
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

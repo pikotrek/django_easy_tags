@@ -3,7 +3,6 @@ from rest_framework import mixins, status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from books.models import Book
 from easy_tags.filters import TagLookupFilter
 from easy_tags.serializers import TagSerializer
 

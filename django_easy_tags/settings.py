@@ -127,5 +127,6 @@ STATIC_URL = '/static/'
 EASY_TAGS = [
     {
         'MODEL': 'books.models.Book',
+        'FILTERS': 'books.filters.TolkienBooksFilter',
     }
 ]

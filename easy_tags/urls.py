@@ -1,11 +1,11 @@
 from django.urls import path
 
-from easy_tags import settings
+from easy_tags import conf
 from easy_tags.views import TaggingView, AllTagsView
 
 urlpatterns = []
 
-for label, config in settings.EASY_TAGS_CONFIG.items():
+for label, config in conf.EASY_TAGS_CONFIG.items():
     urlpatterns.append(
         path(
             f'tags/{label}/<int:pk>/',

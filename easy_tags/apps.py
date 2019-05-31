@@ -3,17 +3,19 @@ from django.conf import settings
 from django.db import ProgrammingError
 from django.utils.module_loading import import_string
 
-from easy_tags import settings as easy_tags_settings
+from easy_tags import conf as easy_tags_settings
 
 
-def get_permissions(permission_setting):
-    val = permission_setting
+def get_setting(setting):
+    val = setting
     if isinstance(val, str):
         val = [import_string(val)]
     elif isinstance(val, (list, tuple)):
         val = [import_string(v) if type(v) is str else v for v in val]
     elif val is not None:
         val = [val]
+    else:
+        val = []
     return val
 
 
@@ -36,7 +38,8 @@ class EasyTagConfig(AppConfig):
             if 'MODEL' in model_setting:
                 app_settings[import_string(model_setting['MODEL'])] = {
                     'label': model_setting.get('LABEL'),
-                    'permissions': model_setting.get('PERMISSIONS')
+                    'permissions': model_setting.get('PERMISSIONS'),
+                    'filters': model_setting.get('FILTERS')
                 }
 
         content_types = {}
@@ -45,13 +48,12 @@ class EasyTagConfig(AppConfig):
                 label = app_settings[model]['label']
                 if not label:
                     label = content_type.model
-                permissions = get_permissions(app_settings[model]['permissions'])
                 content_types[label] = {
                     'content_type': content_type,
-                    'permissions': permissions
+                    'permissions': get_setting(app_settings[model]['permissions']),
+                    'filters': get_setting(app_settings[model]['filters'])
                 }
                 register(model)
-
             easy_tags_settings.EASY_TAGS_CONFIG = content_types
 
             EasyTagConfig.configured = True

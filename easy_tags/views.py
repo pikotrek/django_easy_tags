@@ -3,6 +3,7 @@ from rest_framework import mixins, status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from books.models import Book
 from easy_tags.filters import TagLookupFilter
 from easy_tags.serializers import TagSerializer
 
@@ -76,4 +77,9 @@ class AllTagsView(
     filter_backends = [TagLookupFilter]
 
     def get_queryset(self):
-        return self.config['content_type'].model_class().tags.all()
+        model_class = self.config['content_type'].model_class()
+        queryset = getattr(model_class, '_default_manager').all()
+        print(self.config.get('filters', []))
+        for backend in list(self.config.get('filters', [])):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+        return model_class.tags.filter(items__object_id__in=queryset)

@@ -78,7 +78,6 @@ class AllTagsView(
     def get_queryset(self):
         model_class = self.config['content_type'].model_class()
         queryset = getattr(model_class, '_default_manager').all()
-        print(self.config.get('filters', []))
         for backend in list(self.config.get('filters', [])):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return model_class.tags.filter(items__object_id__in=queryset)

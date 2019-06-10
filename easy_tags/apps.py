@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 from django.conf import settings
-from django.db import ProgrammingError
+from django.db import ProgrammingError, OperationalError
 from django.utils.module_loading import import_string
 
 from easy_tags import conf as easy_tags_settings
@@ -57,5 +57,5 @@ class EasyTagConfig(AppConfig):
             easy_tags_settings.EASY_TAGS_CONFIG = content_types
 
             EasyTagConfig.configured = True
-        except ProgrammingError:
+        except (ProgrammingError, OperationalError):
             pass

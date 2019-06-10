@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 from tagging.models import Tag
 
@@ -25,8 +26,11 @@ class TagSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         obj = self.context['obj']
-        Tag.objects.add_tag(obj, validated_data['name'])
-        return obj.tags.get(**validated_data)
+        tag_name = validated_data['name']
+        if getattr(settings, 'FORCE_LOWERCASE_TAGS', False):
+            tag_name = tag_name.lower()
+        Tag.objects.add_tag(obj, tag_name)
+        return Tag.objects.get(name=tag_name)
 
     class Meta:
         model = Tag

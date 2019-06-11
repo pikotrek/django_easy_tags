@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 from rest_framework import mixins, status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -63,7 +64,7 @@ class TaggingView(
             try:
                 obj = self.config['content_type'].get_object_for_this_type(pk=self.kwargs.get(self.lookup_field))
             except ObjectDoesNotExist:
-                obj = None
+                raise Http404
             setattr(self, '_lazy_obj', obj)
         return getattr(self, '_lazy_obj')
 

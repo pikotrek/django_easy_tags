@@ -1,8 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
 from rest_framework import mixins, status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from tagging.models import Tag
 
 from easy_tags.filters import TagLookupFilter
 from easy_tags.serializers import TagSerializer
@@ -43,7 +43,11 @@ class TaggingView(
         super(TaggingView, self).__init__(config=config)
 
     def get_queryset(self):
-        return self._lazy_object.tags
+        obj = self._lazy_object
+        if obj:
+            return obj.tags
+        else:
+            return Tag.objects.none()
 
     def get_serializer_context(self):
         context = super(TaggingView, self).get_serializer_context()
@@ -64,7 +68,7 @@ class TaggingView(
             try:
                 obj = self.config['content_type'].get_object_for_this_type(pk=self.kwargs.get(self.lookup_field))
             except ObjectDoesNotExist:
-                raise Http404
+                obj = None
             setattr(self, '_lazy_obj', obj)
         return getattr(self, '_lazy_obj')
 

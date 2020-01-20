@@ -56,6 +56,6 @@ class EasyTagConfig(AppConfig):
                 register(model)
             easy_tags_settings.EASY_TAGS_CONFIG = content_types
 
-            EasyTagConfig.configured = True
+            EasyTagConfig.configured = len(content_types) > 0
         except (ProgrammingError, OperationalError):
             pass

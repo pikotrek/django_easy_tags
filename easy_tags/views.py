@@ -45,7 +45,7 @@ class TaggingView(
     def get_queryset(self):
         obj = self._lazy_object
         if obj:
-            return obj.tags
+            return obj.tags.all().order_by('name')
         else:
             return Tag.objects.none()
 
@@ -85,4 +85,4 @@ class AllTagsView(
         queryset = getattr(model_class, '_default_manager').all()
         for backend in list(self.config.get('filters', [])):
             queryset = backend().filter_queryset(self.request, queryset, self)
-        return model_class.tags.filter(items__object_id__in=queryset)
+        return model_class.tags.filter(items__object_id__in=queryset).order_by('name')

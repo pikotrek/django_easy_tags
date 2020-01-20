@@ -30,8 +30,24 @@ django_easy_tags is a simple django app which extends [django-tagging](https://d
 
 ## Basic usage
 
-0. Get all tags for a model
-0. Get all tags for an object
-0. Assign tags to an object
-0. Search tags
-0. Get objects with given tags assigned
+1. Get all tags for a model `book`:
+    ```
+   /tags/book/
+    ```
+1. Get all tags for given `book`:
+    ```
+   /tags/book/1/
+    ```
+1. Assign tags to a `book`:
+    ```
+   /tags/book/1/
+   ["adventure", "s-f"]
+    ```
+1. Search tags for given `book`:
+    ```
+   /tags/book/1/?tag=adventure
+    ```
+1. Get objects with given tags assigned
+    ```
+   /book/?tag=adventure
+    ```

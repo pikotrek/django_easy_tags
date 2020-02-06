@@ -10,10 +10,6 @@ for label, config in conf.EASY_TAGS_CONFIG.items():
         path(
             f'tags/{label}/<int:pk>/',
             TaggingView.as_view(
-                {
-                    'get': 'list',
-                    'post': 'create'
-                },
                 config=config
             ),
             name=f'{label}_tags'
@@ -23,9 +19,6 @@ for label, config in conf.EASY_TAGS_CONFIG.items():
         path(
             f'tags/{label}/',
             AllTagsView.as_view(
-                {
-                    'get': 'list'
-                },
                 config=config
             ),
             name=f'{label}_all_tags'

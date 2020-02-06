@@ -1,7 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import mixins, status
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.views import APIView
 from tagging.models import Tag
 
 from easy_tags.filters import TagLookupFilter
@@ -15,25 +16,25 @@ class ConfigurableViewMixin(object):
         self.config = config
 
 
-class ConfigurableViewSet(
-    GenericViewSet,
+class ConfigurableView(
+    APIView,
     ConfigurableViewMixin
 ):
     pagination_class = None
 
     def __init__(self, config=None):
-        super(ConfigurableViewSet, self).__init__(config=config)
+        super(ConfigurableView, self).__init__(config=config)
 
     def get_permissions(self):
         if self.config['permissions']:
             self.permission_classes = self.config['permissions']
-        return super(ConfigurableViewSet, self).get_permissions()
+        return super(ConfigurableView, self).get_permissions()
 
 
 class TaggingView(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    ConfigurableViewSet
+    ListAPIView,
+    CreateAPIView,
+    ConfigurableView
 ):
     pagination_class = None
     serializer_class = TagSerializer
@@ -74,11 +75,12 @@ class TaggingView(
 
 
 class AllTagsView(
-    mixins.ListModelMixin,
-    ConfigurableViewSet
+    ListAPIView,
+    ConfigurableView
 ):
     serializer_class = TagSerializer
     filter_backends = [TagLookupFilter]
+    pagination_class = None
 
     def get_queryset(self):
         model_class = self.config['content_type'].model_class()
